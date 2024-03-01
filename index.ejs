@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>api</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_YANDEX_MAPS_API_KEY&lang=en_US" type="text/javascript"></script>
+</head>
+<body style="background-color: black;  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; color: burlywood;">
+<a href="/views/login.ejs">Dashboard</a>
+
+
+<!-- PokeAPI Section -->
+<h2 style="margin-left: 48%;">Data</h2>
+<form id="pokemonForm">
+    <label for="pokemonId" style="">Enter Pokemon ID:</label>
+    <input type="number" id="pokemonId" name="pokemonId" min="1" max="811" required  style="color: black;">
+    <button type="submit" style="color: black;" >Fetch Data</button>
+</form>
+<div id="pokemonData"></div>
+
+<!-- YouTube Video Embed -->
+<h2 style="margin-left: 43.5%;">YouTube Video</h2>
+<iframe width='90%' height='760' style="margin-left: 5%;" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+<iframe width='1080' height='760' src="finalWEB/views/blockch.js" width="100%" height="600px"></iframe>
+<!-- Yandex Maps Embed -->
+<h2 style="margin-left: 43.5%;">Yandex Maps</h2>
+<div id="yandexMap" style="width:90%;height:400px; margin-left: 5%; margin-bottom: 5%;"></div>
+
+<script>
+    function renderRegistration(){
+        response.render('register.ejs');
+        }
+     function fetchData() {
+      try {
+        const response = fetch('https://api.coindesk.com/v1/bpi/currentprice.json');
+        const data = response.json();
+
+        document.getElementById('bitcoinPrice').innerText = `Цена биткоина в USD: ${data.bpi.USD.rate}`;
+        document.getElementById('updateTime').innerText = `Дата и время обновления: ${data.time.updated}`;
+      } catch (error) {
+        console.error('Ошибка при получении данных с API биткоина:', error.message);
+      }
+    }
+
+    // Initialize Yandex Maps
+    function initYandexMap() {
+        ymaps.ready(function () {
+            var map = new ymaps.Map("yandexMap", {
+                center: [51.1655, 71.4272],
+                zoom: 10
+            });
+        });
+    }
+    // Function to fetch Pokemon data from PokeAPI
+    function fetchPokemonData(pokemonId) {
+        $.ajax({
+            url: `https://pokeapi.co/api/v2/pokemon/${pokemonId}`,
+            type: 'GET',
+            success: function(data) {
+                // Display Pokemon data
+                $('#pokemonData').html(`
+                    <p>Name: ${data.name}</p>
+                    <p>Height: ${data.height}</p>
+                    <p>Weight: ${data.weight}</p>
+                    <img src="${data.sprites.front_default}" alt="Pokemon Image">
+                `);
+            },
+            error: function(error) {
+                console.log('Error fetching Pokemon data:', error);
+            }
+        });
+    }
+
+    // Handle form submission
+    $('#pokemonForm').submit(function(event) {
+        event.preventDefault();
+        var pokemonId = $('#pokemonId').val();
+        fetchPokemonData(pokemonId);
+    });
+
+    // Call initialization functions
+    initYandexMap();
+</script>
+</body>
+</html>
